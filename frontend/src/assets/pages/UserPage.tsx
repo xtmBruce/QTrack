@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
@@ -17,7 +16,6 @@ const UserPage: React.FC = () => {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock ticket data
   const [ticketData] = useState({
     ticketNumber: 'A042',
     queuePosition: 8,
@@ -29,7 +27,6 @@ const UserPage: React.FC = () => {
   const handleGetTicket = () => {
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
       setHasTicket(true);
@@ -52,18 +49,18 @@ const UserPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <FiFileText className="w-6 h-6 text-white" />
+              <div className="p-2 bg-blue-600 text-white rounded-lg">
+                <FiFileText className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Smart Queue</h1>
-                <p className="text-sm text-gray-600">Digital Queue Management</p>
+                <h1 className="text-xl font-bold text-gray-900">Smart Queue</h1>
+                <p className="text-sm text-gray-500">Digital Queue Management</p>
               </div>
             </div>
           </div>
@@ -73,104 +70,128 @@ const UserPage: React.FC = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!hasTicket ? (
-          // Welcome Screen
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FiFileText className="w-10 h-10 text-blue-600" />
+          <div className="max-w-3xl mx-auto">
+            {/* Welcome Card */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+              <div className="p-8 sm:p-10 text-center">
+                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FiFileText className="w-10 h-10 text-blue-600" />
+                </div>
+                
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Welcome to Smart Queue
+                </h2>
+                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
+                  Get your digital ticket and track your queue position in real-time. 
+                  No more standing in line!
+                </p>
+
+                <div className="max-w-xs mx-auto">
+                  <Button
+                    onClick={handleGetTicket}
+                    loading={isLoading}
+                    size="lg"
+                    className="w-full"
+                  >
+                    Get My Ticket
+                  </Button>
+                </div>
               </div>
-              
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                Welcome to Smart Queue
-              </h2>
-              <p className="text-gray-600 mb-8 text-lg">
-                Get your digital ticket and track your queue position in real-time. 
-                No more standing in line!
-              </p>
 
-              <Button
-                onClick={handleGetTicket}
-                loading={isLoading}
-                size="lg"
-                fullWidth
-              >
-                Get My Ticket
-              </Button>
-
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">How it works</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">
-                      1
+              {/* How it works */}
+              <div className="bg-gray-50 p-8 border-t border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider text-center mb-6">
+                  How it works
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {[
+                    {
+                      title: 'Get Your Ticket',
+                      description: 'Click to get your digital ticket',
+                      icon: '1'
+                    },
+                    {
+                      title: 'Track in Real-time',
+                      description: 'Monitor your position and wait time',
+                      icon: '2'
+                    },
+                    {
+                      title: 'Get Notified',
+                      description: 'We\'ll alert you when it\'s your turn',
+                      icon: '3'
+                    }
+                  ].map((step, index) => (
+                    <div 
+                      key={index} 
+                      className="bg-white p-5 rounded-xl border border-gray-100 text-center"
+                    >
+                      <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                        {step.icon}
+                      </div>
+                      <h4 className="font-medium text-gray-900 mb-1">{step.title}</h4>
+                      <p className="text-sm text-gray-500">{step.description}</p>
                     </div>
-                    <p className="text-sm text-gray-600">Click to get your digital ticket</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">
-                      2
-                    </div>
-                    <p className="text-sm text-gray-600">Track your position and wait time</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">
-                      3
-                    </div>
-                    <p className="text-sm text-gray-600">Get notified when it's your turn</p>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
 
             {/* Live Queue Status */}
-            <div className="mt-8">
-              <QueueStatus
-                currentTicket="A035"
-                totalInQueue={23}
-                averageWaitTime={5}
-                nextTickets={['A036', 'A037', 'A038']}
-              />
-            </div>
+            <QueueStatus
+              currentTicket="A035"
+              totalInQueue={23}
+              averageWaitTime={5}
+              nextTickets={['A036', 'A037', 'A038']}
+            />
           </div>
         ) : (
-          // Ticket Display Screen
           <div className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Ticket Card */}
-              <TicketCard
-                ticketNumber={ticketData.ticketNumber}
-                queuePosition={ticketData.queuePosition}
-                estimatedWaitTime={ticketData.estimatedWaitTime}
-                status={ticketData.status}
-                issuedAt={ticketData.issuedAt}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <TicketCard
+                  ticketNumber={ticketData.ticketNumber}
+                  queuePosition={ticketData.queuePosition}
+                  estimatedWaitTime={ticketData.estimatedWaitTime}
+                  status={ticketData.status}
+                  issuedAt={ticketData.issuedAt}
+                />
+              </div>
 
-              {/* Queue Status */}
-              <QueueStatus
-                currentTicket="A035"
-                totalInQueue={23}
-                averageWaitTime={5}
-                nextTickets={['A036', 'A037', 'A038']}
-              />
+              <div className="lg:col-span-1">
+                <QueueStatus
+                  currentTicket="A035"
+                  totalInQueue={23}
+                  averageWaitTime={5}
+                  nextTickets={['A036', 'A037', 'A038']}
+                />
+              </div>
             </div>
 
-            {/* Wait Time Estimate */}
-            <WaitTimeEstimate
-              position={ticketData.queuePosition}
-              estimatedMinutes={ticketData.estimatedWaitTime}
-              peopleAhead={ticketData.queuePosition - 1}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <WaitTimeEstimate
+                position={ticketData.queuePosition}
+                estimatedMinutes={ticketData.estimatedWaitTime}
+                peopleAhead={ticketData.queuePosition - 1}
+              />
 
-            {/* Actions */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Ticket Actions</h3>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => window.print()}>
-                  Print Ticket
-                </Button>
-                <Button variant="danger" onClick={handleCancelTicket}>
-                  Cancel Ticket
-                </Button>
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Ticket Actions</h3>
+                <div className="space-y-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => window.print()} 
+                    className="w-full"
+                  >
+                    Print Ticket
+                  </Button>
+                  <Button 
+                    variant="danger" 
+                    onClick={handleCancelTicket} 
+                    className="w-full"
+                  >
+                    Cancel Ticket
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -185,28 +206,35 @@ const UserPage: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         title="Cancel Ticket"
         footer={
-          <>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsModalOpen(false)}
+              className="w-full sm:w-auto"
+            >
               Keep Ticket
             </Button>
-            <Button variant="danger" onClick={confirmCancelTicket}>
-              Yes, Cancel
+            <Button 
+              variant="danger" 
+              onClick={confirmCancelTicket}
+              className="w-full sm:w-auto"
+            >
+              Yes, Cancel Ticket
             </Button>
-          </>
+          </div>
         }
       >
-        <p className="text-gray-600">
-          Are you sure you want to cancel your ticket? You will lose your position in the queue 
-          and will need to get a new ticket.
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to cancel your ticket? This action cannot be undone.
         </p>
       </Modal>
 
-      {/* Toast Notifications */}
+      {/* Toast Notification */}
       <Toast
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
         message={toastMessage}
         type={toastType}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
       />
     </div>
   );
