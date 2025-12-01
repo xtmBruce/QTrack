@@ -1,241 +1,155 @@
 import React, { useState } from 'react';
-import Button from '../components/common/Button';
-import Modal from '../components/common/Modal';
-import Loading from '../components/common/Loading';
-import Toast from '../components/common/Toast';
 import TicketCard from '../components/user/TicketCard';
 import QueueStatus from '../components/user/QueueStatus';
 import WaitTimeEstimate from '../components/user/WaitTimeEstimate';
-import { FiFileText } from 'react-icons/fi';
+import { FaPlus } from 'react-icons/fa';
 
 const UserPage: React.FC = () => {
+  // Mock state for demonstration
   const [hasTicket, setHasTicket] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning'>('success');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [ticketData] = useState({
-    ticketNumber: 'A042',
-    queuePosition: 8,
-    estimatedWaitTime: 12,
-    status: 'waiting' as const,
-    issuedAt: new Date()
+  const [ticket, setTicket] = useState({
+    number: 'A-142',
+    status: 'waiting' as 'waiting' | 'serving' | 'completed' | 'cancelled',
+    timestamp: '10:45 AM'
   });
 
-  const handleGetTicket = () => {
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setHasTicket(true);
-      setToastType('success');
-      setToastMessage('Ticket generated successfully!');
-      setShowToast(true);
-    }, 1500);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+
+  const handleJoinQueue = () => {
+    // Simulate API call
+    setHasTicket(true);
+    // Update ticket status for demo
+    setTicket(prev => ({ ...prev, status: 'waiting' }));
   };
 
-  const handleCancelTicket = () => {
-    setIsModalOpen(true);
-  };
-
-  const confirmCancelTicket = () => {
+  const confirmLeaveQueue = () => {
     setHasTicket(false);
-    setIsModalOpen(false);
-    setToastType('info');
-    setToastMessage('Ticket cancelled successfully');
-    setShowToast(true);
+    setShowLeaveModal(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600 text-white rounded-lg">
-                <FiFileText className="w-6 h-6" />
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-blue-100">
+      {/* Background Decoration */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-blue-100/50 blur-3xl opacity-60"></div>
+        <div className="absolute top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-indigo-100/50 blur-3xl opacity-60"></div>
+      </div>
+
+      <div className="relative z-10 max-w-md mx-auto min-h-screen flex flex-col p-6">
+        {/* Header */}
+        <header className="flex justify-between items-center py-6 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
+              Q
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">SmartQueue</h1>
+          </div>
+          <div className="px-3 py-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-xs font-semibold text-gray-500 shadow-sm">
+            v1.0
+          </div>
+        </header>
+
+        <main className="flex-1 flex flex-col">
+          {!hasTicket ? (
+            <div className="flex-1 flex flex-col items-center justify-center animate-fade-in">
+              <div className="relative mb-12 group cursor-pointer" onClick={handleJoinQueue}>
+                {/* Pulse Effect */}
+                <div className="absolute inset-0 bg-blue-400 rounded-full opacity-20 animate-ping-slow group-hover:opacity-30 transition-opacity"></div>
+                <div className="absolute inset-4 bg-blue-500 rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-500"></div>
+                
+                {/* Main Button */}
+                <div className="relative w-64 h-64 bg-white rounded-full flex flex-col items-center justify-center shadow-2xl shadow-blue-200 border-[6px] border-white group-hover:scale-105 transition-transform duration-300 ease-out">
+                  <div className="w-full h-full rounded-full bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center overflow-hidden relative">
+                    <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white to-transparent opacity-50"></div>
+                    <FaPlus className="text-5xl text-blue-600 mb-4 drop-shadow-sm group-hover:rotate-90 transition-transform duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)" />
+                    <span className="text-xl font-bold text-gray-800 tracking-wide">Join Queue</span>
+                    <span className="text-xs text-blue-500 font-medium mt-1 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-12">Tap to start</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Smart Queue</h1>
-                <p className="text-sm text-gray-500">Digital Queue Management</p>
+
+              <div className="text-center mb-12 space-y-3">
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Ready to join?</h2>
+                <p className="text-gray-500 text-lg max-w-[280px] mx-auto leading-relaxed">
+                  Get your digital ticket and track your status in real-time.
+                </p>
               </div>
+              
+              <div className="w-full mt-auto mb-8">
+                <QueueStatus waitingCount={12} openCounters={3} />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6 animate-slide-up pb-8">
+              <div className="flex justify-between items-end px-1 mb-2">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Your Status</h2>
+                  <p className="text-sm text-gray-500">You are currently in line</p>
+                </div>
+                <button 
+                  onClick={() => setShowLeaveModal(true)} 
+                  className="text-sm text-red-600 hover:text-red-700 font-semibold px-4 py-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                >
+                  Leave Queue
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <TicketCard 
+                  ticketNumber={ticket.number} 
+                  status={ticket.status} 
+                  timestamp={ticket.timestamp}
+                />
+
+                <WaitTimeEstimate minutes={15} />
+                
+                <QueueStatus waitingCount={12} openCounters={3} />
+              </div>
+
+              <div className="mt-4 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100/50 shadow-sm">
+                <div className="flex gap-3">
+                  <span className="text-xl">💡</span>
+                  <div>
+                    <p className="font-bold text-blue-900 text-sm mb-1">Pro Tip</p>
+                    <p className="text-blue-800/80 text-sm leading-relaxed">
+                      Enable notifications to get alerted when your turn is coming up. Stay close to the waiting area.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Confirmation Modal */}
+      {showLeaveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm transform transition-all scale-100 animate-scale-up border border-gray-100">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-4 mx-auto">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 text-center mb-2">Leave the queue?</h3>
+            <p className="text-gray-500 text-center mb-8 leading-relaxed">
+              You will lose your spot <span className="font-semibold text-gray-700">{ticket.number}</span>. This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowLeaveModal(false)}
+                className="flex-1 px-4 py-3.5 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmLeaveQueue}
+                className="flex-1 px-4 py-3.5 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
+              >
+                Leave Queue
+              </button>
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {!hasTicket ? (
-          <div className="max-w-3xl mx-auto">
-            {/* Welcome Card */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-              <div className="p-8 sm:p-10 text-center">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FiFileText className="w-10 h-10 text-blue-600" />
-                </div>
-                
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Welcome to Smart Queue
-                </h2>
-                <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-                  Get your digital ticket and track your queue position in real-time. 
-                  No more standing in line!
-                </p>
-
-                <div className="max-w-xs mx-auto">
-                  <Button
-                    onClick={handleGetTicket}
-                    loading={isLoading}
-                    size="lg"
-                    className="w-full"
-                  >
-                    Get My Ticket
-                  </Button>
-                </div>
-              </div>
-
-              {/* How it works */}
-              <div className="bg-gray-50 p-8 border-t border-gray-100">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider text-center mb-6">
-                  How it works
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {[
-                    {
-                      title: 'Get Your Ticket',
-                      description: 'Click to get your digital ticket',
-                      icon: '1'
-                    },
-                    {
-                      title: 'Track in Real-time',
-                      description: 'Monitor your position and wait time',
-                      icon: '2'
-                    },
-                    {
-                      title: 'Get Notified',
-                      description: 'We\'ll alert you when it\'s your turn',
-                      icon: '3'
-                    }
-                  ].map((step, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-white p-5 rounded-xl border border-gray-100 text-center"
-                    >
-                      <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-3">
-                        {step.icon}
-                      </div>
-                      <h4 className="font-medium text-gray-900 mb-1">{step.title}</h4>
-                      <p className="text-sm text-gray-500">{step.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Live Queue Status */}
-            <QueueStatus
-              currentTicket="A035"
-              totalInQueue={23}
-              averageWaitTime={5}
-              nextTickets={['A036', 'A037', 'A038']}
-            />
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <TicketCard
-                  ticketNumber={ticketData.ticketNumber}
-                  queuePosition={ticketData.queuePosition}
-                  estimatedWaitTime={ticketData.estimatedWaitTime}
-                  status={ticketData.status}
-                  issuedAt={ticketData.issuedAt}
-                />
-              </div>
-
-              <div className="lg:col-span-1">
-                <QueueStatus
-                  currentTicket="A035"
-                  totalInQueue={23}
-                  averageWaitTime={5}
-                  nextTickets={['A036', 'A037', 'A038']}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <WaitTimeEstimate
-                position={ticketData.queuePosition}
-                estimatedMinutes={ticketData.estimatedWaitTime}
-                peopleAhead={ticketData.queuePosition - 1}
-              />
-
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Ticket Actions</h3>
-                <div className="space-y-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => window.print()} 
-                    className="w-full"
-                  >
-                    Print Ticket
-                  </Button>
-                  <Button 
-                    variant="danger" 
-                    onClick={handleCancelTicket} 
-                    className="w-full"
-                  >
-                    Cancel Ticket
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isLoading && <Loading text="Getting your ticket..." fullScreen />}
-      </main>
-
-      {/* Cancel Confirmation Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Cancel Ticket"
-        footer={
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <Button 
-              variant="outline" 
-              onClick={() => setIsModalOpen(false)}
-              className="w-full sm:w-auto"
-            >
-              Keep Ticket
-            </Button>
-            <Button 
-              variant="danger" 
-              onClick={confirmCancelTicket}
-              className="w-full sm:w-auto"
-            >
-              Yes, Cancel Ticket
-            </Button>
-          </div>
-        }
-      >
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to cancel your ticket? This action cannot be undone.
-        </p>
-      </Modal>
-
-      {/* Toast Notification */}
-      <Toast
-        isOpen={showToast}
-        onClose={() => setShowToast(false)}
-        message={toastMessage}
-        type={toastType}
-      />
+      )}
     </div>
   );
 };
