@@ -39,7 +39,7 @@ const UserPage: React.FC = () => {
         {/* Header */}
         <header className="flex justify-between items-center py-6 mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
+            <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
               Q
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">SmartQueue</h1>
@@ -59,8 +59,8 @@ const UserPage: React.FC = () => {
                 
                 {/* Main Button */}
                 <div className="relative w-64 h-64 bg-white rounded-full flex flex-col items-center justify-center shadow-2xl shadow-blue-200 border-[6px] border-white group-hover:scale-105 transition-transform duration-300 ease-out">
-                  <div className="w-full h-full rounded-full bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center overflow-hidden relative">
-                    <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white to-transparent opacity-50"></div>
+                  <div className="w-full h-full rounded-full bg-linear-to-b from-blue-50 to-white flex flex-col items-center justify-center overflow-hidden relative">
+                    <div className="absolute top-0 inset-x-0 h-1/2 bg-linear-to-b from-white to-transparent opacity-50"></div>
                     <FaPlus className="text-5xl text-blue-600 mb-4 drop-shadow-sm group-hover:rotate-90 transition-transform duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)" />
                     <span className="text-xl font-bold text-gray-800 tracking-wide">Join Queue</span>
                     <span className="text-xs text-blue-500 font-medium mt-1 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-12">Tap to start</span>
@@ -106,7 +106,7 @@ const UserPage: React.FC = () => {
                 <QueueStatus waitingCount={12} openCounters={3} />
               </div>
 
-              <div className="mt-4 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100/50 shadow-sm">
+              <div className="mt-4 p-5 bg-linear-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100/50 shadow-sm">
                 <div className="flex gap-3">
                   <span className="text-xl">💡</span>
                   <div>
