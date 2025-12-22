@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/useAuth';
 import AnalyticsCards from './AnalyticsCards';
 import CallNextButton from './CallNextButton';
 import ActiveQueueList from './ActiveQueueList';
-import { FaSignOutAlt, FaCog } from 'react-icons/fa';
+import QuickActions from './actions/QuickActions';
+import { FaSignOutAlt, FaCog, FaPause } from 'react-icons/fa';
 
 const QueueDashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
   // Mock Data
   const [queue, setQueue] = useState([
     { id: '1', ticketNumber: 'A-143', name: 'John Doe', service: 'General Inquiry', waitTime: '12', status: 'waiting' as const },
@@ -15,8 +21,14 @@ const QueueDashboard: React.FC = () => {
 
   const [currentTicket, setCurrentTicket] = useState<string | null>('A-142');
   const [isCalling, setIsCalling] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const handleCallNext = () => {
+    if (isPaused) {
+      alert('Queue is currently paused. Please resume to call next ticket.');
+      return;
+    }
+
     setIsCalling(true);
     setTimeout(() => {
       if (queue.length > 0) {
@@ -29,15 +41,29 @@ const QueueDashboard: React.FC = () => {
   };
 
   const handleRemove = (id: string) => {
-    setQueue(queue.filter(item => item.id !== id));
+    const confirmed = window.confirm('Are you sure you want to remove this ticket from the queue?');
+    if (confirmed) {
+      setQueue(queue.filter(item => item.id !== id));
+    }
   };
 
   const handlePrioritize = (id: string) => {
-    // Move item to top
     const item = queue.find(q => q.id === id);
     if (item) {
       const newQueue = [item, ...queue.filter(q => q.id !== id)];
       setQueue(newQueue);
+    }
+  };
+
+  const handleTogglePause = () => {
+    setIsPaused(!isPaused);
+  };
+
+  const handleLogout = () => {
+    const confirmed = window.confirm('Are you sure you want to logout?');
+    if (confirmed) {
+      logout();
+      navigate('/admin/login');
     }
   };
 
@@ -50,14 +76,37 @@ const QueueDashboard: React.FC = () => {
           <span className="font-bold text-gray-800 text-lg">Admin Dashboard</span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            Counter 3 Active
+          {/* User Info */}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg text-sm">
+            <span className="text-gray-600">Logged in as:</span>
+            <span className="font-semibold text-gray-900">{user?.username}</span>
           </div>
-          <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+
+          {/* Counter Status */}
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
+            isPaused 
+              ? 'bg-amber-50 text-amber-700' 
+              : 'bg-blue-50 text-blue-700'
+          }`}>
+            {isPaused && <FaPause className="text-xs" />}
+            <span className={`w-2 h-2 rounded-full ${isPaused ? 'bg-amber-500' : 'bg-green-500'}`}></span>
+            {isPaused ? 'Queue Paused' : 'Counter 3 Active'}
+          </div>
+
+          {/* Settings Button */}
+          <button 
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            title="Settings"
+          >
             <FaCog />
           </button>
-          <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+
+          {/* Logout Button */}
+          <button 
+            onClick={handleLogout}
+            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+            title="Logout"
+          >
             <FaSignOutAlt />
           </button>
         </div>
@@ -75,9 +124,32 @@ const QueueDashboard: React.FC = () => {
               <div className="text-xs text-gray-500 uppercase font-bold tracking-wider">Now Serving</div>
               <div className="text-2xl font-mono font-bold text-blue-600">{currentTicket || '---'}</div>
             </div>
-            <CallNextButton onCallNext={handleCallNext} isLoading={isCalling} disabled={queue.length === 0} />
+            <CallNextButton 
+              onCallNext={handleCallNext} 
+              isLoading={isCalling} 
+              disabled={queue.length === 0 || isPaused} 
+            />
           </div>
         </div>
+
+        {/* Pause Alert Banner */}
+        {isPaused && (
+          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+              <FaPause />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-amber-900">Queue is Paused</h4>
+              <p className="text-sm text-amber-700">No new tickets will be called until you resume the queue.</p>
+            </div>
+            <button 
+              onClick={handleTogglePause}
+              className="px-4 py-2 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors text-sm"
+            >
+              Resume Now
+            </button>
+          </div>
+        )}
 
         {/* Analytics */}
         <AnalyticsCards 
@@ -97,23 +169,15 @@ const QueueDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Right: Quick Actions / Notifications */}
+          {/* Right: Quick Actions & System Status */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full text-left px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium transition-colors text-sm">
-                  Pause Queue
-                </button>
-                <button className="w-full text-left px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium transition-colors text-sm">
-                  Transfer Ticket
-                </button>
-                <button className="w-full text-left px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium transition-colors text-sm">
-                  Issue Special Ticket
-                </button>
-              </div>
-            </div>
+            {/* Quick Actions */}
+            <QuickActions 
+              isPaused={isPaused}
+              onTogglePause={handleTogglePause}
+            />
 
+            {/* System Status */}
             <div className="bg-linear-to-br from-indigo-600 to-purple-700 p-6 rounded-2xl text-white shadow-lg">
               <h3 className="font-bold text-lg mb-2">System Status</h3>
               <p className="text-indigo-100 text-sm mb-4">All systems operational. WebSocket connection active.</p>
